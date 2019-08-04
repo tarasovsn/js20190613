@@ -6,7 +6,7 @@ html, body {
     display: flex;
     height: 100%;
     flex-direction: column;
-    justify-content: flex-end;
+    justify-content: flex-start;
 }
 
 .row {
@@ -31,4 +31,10 @@ tr td {
 
 form, form > div {
     padding-left: 0 !important;
+}
+
+.modal-error-msg {
+    color: red;
+    font-size: 18px;
+    padding-bottom: 10px;
 }
