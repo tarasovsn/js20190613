@@ -8,7 +8,7 @@ export class Table {
   }
 
   _onRowClick(e) {
-    const target = e.target.closest('tr');
+    const target = e.target.closest('tbody tr');
     if (!target) return;
 
     const id = target.dataset.id;
