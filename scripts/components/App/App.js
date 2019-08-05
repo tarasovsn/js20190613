@@ -8,7 +8,7 @@ export class App {
   constructor({ element }) {
     this._el = element;
     this._userBalance = 10000;
-    this._userCoins = [];
+    this._userCoins = new Map();
     this._render();
     this._data = DataService.getCurrencies();
     this._initTable();
@@ -21,14 +21,13 @@ export class App {
   }
 
   _addUserCoin(coin, amount, total) {
-    const foundCoin = this._userCoins.find(curCoin => curCoin.id === coin.id);
+    const foundCoin = this._userCoins.get(coin.id);
     if (foundCoin) {
-      foundCoin.amount = +Number(+amount + foundCoin.amount).toFixed(8);
-      foundCoin.total = +Number(+total + foundCoin.total).toFixed(2);
-      foundCoin.price = +Number(foundCoin.total / foundCoin.amount).toFixed(2);
+      foundCoin.amount = foundCoin.amount + (+amount);
+      foundCoin.total = foundCoin.total + (+total);
+      foundCoin.price = foundCoin.total / foundCoin.amount;
     } else {
-      this._userCoins.push({
-        id: coin.id,
+      this._userCoins.set(coin.id , {
         name: coin.name,
         amount,
         total,
@@ -39,8 +38,8 @@ export class App {
 
   _buyItem(coinId, amount) {
     const coin = this._getCoin(coinId);
-    const total = +Number(coin.price * amount).toFixed(2);
-    if (total === 0) {
+    const total = coin.price * amount;
+    if (total < 0.01) {
       return { 
         isSuccess: false,
         errorMsg: "Buy operation error: Total sum must be positive!",     
@@ -51,7 +50,7 @@ export class App {
         errorMsg: "Buy operation error: Insufficient funds in the account!",     
       }
     } else {
-      this._userBalance = +Number(this._userBalance - total).toFixed(2);
+      this._userBalance = this._userBalance - total;
       this._addUserCoin(coin, amount, total);
       this._portfolio.updatePortfolio({ 
         balance: this._userBalance,
