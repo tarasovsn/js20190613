@@ -14,7 +14,7 @@ export class TradeWidget {
         this._errorMsg = "Please enter the pozitive number!";
       } else {
         this._amount = value;
-        this._total = +Number(this._amount * this._currentItem.price).toFixed(2);
+        this._total = this._amount * this._currentItem.price;
         this._errorMsg = null;
         this._isBuyActive = true;
       }
@@ -43,20 +43,20 @@ export class TradeWidget {
   }
 
   closeTradeWindow() {
-    this._el.innerHTML = '';
+    this._modalEl.classList.remove('open');
   }
 
   _updateDisplay() {
-    this._el.querySelector('#item-total').textContent = this._total;
+    this._itemTotalEl.textContent = this._total.toFixed(2);
     if (this._errorMsg) {
-      this._el.querySelector('#item-error-msg').textContent = this._errorMsg;
+      this._errorMsgEl.textContent = this._errorMsg;
     } else {
-      this._el.querySelector('#item-error-msg').textContent = '';
+      this._errorMsgEl.textContent = '';
     }
     if (this._isBuyActive) {
-      this._el.querySelector('a.modal-buy').classList.remove('disabled');
+      this._buyButtonEl.classList.remove('disabled');
     } else {
-      this._el.querySelector('a.modal-buy').classList.add('disabled');
+      this._buyButtonEl.classList.add('disabled');
     }
   }
 
@@ -66,13 +66,13 @@ export class TradeWidget {
         <div class="modal-content">
           <h4>Buying ${item.name}:</h4>
           <p>
-            Current price: ${item.price}. Total: <span id="item-total">${this._total}</span>
+            Current price: ${item.price}. Total: <span id="item-total">${this._total.toFixed(2)}</span>
           </p>
           <div id="item-error-msg" class="modal-error-msg"></div>
           <div class="row">
             <form class="col s12">
                 <div class="input-field col s4">
-                    <input id="amount" type="number">
+                    <input id="amount" type="text">
                     <label for="amount">Amount</label>
                 </div>
             </form>
@@ -87,5 +87,9 @@ export class TradeWidget {
     `;
     let elems = this._el.querySelectorAll('.collapsible');
     M.Collapsible.init(elems);
+    this._buyButtonEl = this._el.querySelector('a.modal-buy');
+    this._errorMsgEl = this._el.querySelector('#item-error-msg');
+    this._itemTotalEl = this._el.querySelector('#item-total');
+    this._modalEl = this._el.querySelector('#modal');
   }
 }
