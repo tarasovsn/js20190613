@@ -4,9 +4,9 @@ html, body {
 
 #app {
     display: flex;
-    height: 100%;
+    min-height: 100%;
     flex-direction: column;
-    justify-content: flex-start;
+    justify-content: flex-end;
 }
 
 .row {
