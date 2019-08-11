@@ -12,8 +12,10 @@ export class App extends Component {
     this._userBalance = 10000;
     this._userCoins = new Map();
     this._render();
-    this._data = DataService.getCurrencies();
-    this._initTable();
+    DataService.getCurrencies().then(data => {
+      this._data = data;
+      this._initTable();
+    });
     this._initPortfolio();
     this._initTradeWidget();
   }
