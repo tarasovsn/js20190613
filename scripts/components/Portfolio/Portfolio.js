@@ -3,18 +3,19 @@ export class Portfolio {
   constructor({ element, balance, items }) {
     this._el = element;
     this._balance = balance;
-    this._items = items;
+    this._items = [ ...items.values() ];
     this._render();
   }
 
   updatePortfolio({ balance, items }) {
     this._balance = +balance;
-    this._items = items;
-    this._render();
+    this._items = [ ...items.values() ];
+    this._headerEl.innerHTML = this._renderHeader();
+    this._tableBodyEl.innerHTML = this._renderTableBody();
   }
 
   _getPortfolioWorth() {
-    return Number(this._items.reduce((sum, cur) => sum + cur.total, 0)).toFixed(2);
+    return this._items.reduce((sum, cur) => sum + cur.total, 0);
   }
 
   _render() {
@@ -22,8 +23,7 @@ export class Portfolio {
       <ul class="collapsible portfolio">
         <li>
           <p class="collapsible-header">
-              Current balance: $${this._balance}<br>
-              Portfolio Worth: $${this._getPortfolioWorth()}
+            ${this._renderHeader()}
           </p>
           <div class="collapsible-body">
             <table class="highlight striped">
@@ -36,16 +36,7 @@ export class Portfolio {
                   </tr>
               </thead>
               <tbody>
-                ${
-                  this._items.map(item => `
-                    <tr class="portfolio-row">
-                      <td>${item.name}</td>
-                      <td>${item.amount}</td>
-                      <td>${item.price}</td>
-                      <td>${item.total}</td>
-                    </tr>
-                  `).join('')
-                }
+                ${this._renderTableBody()}
               </tbody>
             </table>
           </div>
@@ -54,5 +45,29 @@ export class Portfolio {
     `;
     let elems = this._el.querySelectorAll('.collapsible');
     M.Collapsible.init(elems);
+    this._headerEl = this._el.querySelector('.collapsible-header');
+    this._tableBodyEl = this._el.querySelector('tbody');
+  }
+
+  _renderHeader() {
+    return `
+      Current balance: $${this._balance.toFixed(2)}<br>
+      Portfolio Worth: $${this._getPortfolioWorth().toFixed(2)}
+    `;
+  }
+
+  _renderTableBody() {
+    return `
+      ${
+        this._items.map(item => `
+          <tr class="portfolio-row">
+            <td>${item.name}</td>
+            <td>${item.amount.toFixed(8)}</td>
+            <td>${item.price.toFixed(2)}</td>
+            <td>${item.total.toFixed(2)}</td>
+          </tr>
+        `).join('')
+      }
+    `;
   }
 }
