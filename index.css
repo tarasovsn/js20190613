@@ -33,6 +33,14 @@ form, form > div {
     padding-left: 0 !important;
 }
 
+[data-element="portfolio"] {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    background-color: white;
+    min-width: 400px;
+}
+
 .modal-error-msg {
     color: red;
     font-size: 18px;

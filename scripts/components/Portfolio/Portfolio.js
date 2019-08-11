@@ -1,6 +1,6 @@
 export class Portfolio {
 
-  constructor({ element, balance, items }) {
+  constructor({ element, balance, items = [] }) {
     this._el = element;
     this._balance = balance;
     this._items = [ ...items.values() ];

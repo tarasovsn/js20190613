@@ -2,10 +2,12 @@ import { Table } from '../Table/Table.js';
 import { Portfolio } from '../Portfolio/Portfolio.js';
 import { TradeWidget } from '../TradeWidget/TradeWidget.js';
 import { DataService } from '../../services/DataService.js';
+import { Component } from "../component/Component.js";
 
-export class App {
+export class App extends Component {
 
   constructor({ element }) {
+    super();
     this._el = element;
     this._userBalance = 10000;
     this._userCoins = new Map();
@@ -40,15 +42,9 @@ export class App {
     const coin = this._getCoin(coinId);
     const total = coin.price * amount;
     if (total < 0.01) {
-      return { 
-        isSuccess: false,
-        errorMsg: "Buy operation error: Total sum must be positive!",     
-      }
+      this._tradeWidget.showErrorMessage("Buy operation error: Total sum must be positive!");
     } else if (total > this._userBalance) {
-      return { 
-        isSuccess: false,
-        errorMsg: "Buy operation error: Insufficient funds in the account!",     
-      }
+      this._tradeWidget.showErrorMessage("Buy operation error: Insufficient funds in the account!");
     } else {
       this._userBalance = this._userBalance - total;
       this._addUserCoin(coin, amount, total);
@@ -56,9 +52,7 @@ export class App {
         balance: this._userBalance,
         items: this._userCoins
       });
-    }
-    return { 
-      isSuccess: true
+      this._tradeWidget.closeTradeWindow();
     }
   }
 
@@ -66,8 +60,8 @@ export class App {
     this._table = new Table({
       data: this._data,
       element: this._el.querySelector('[data-element=table]'),
-      onRowClick: (coinId) => this._tradeWidget.openTradeWindow(this._getCoin(coinId)),
     });
+    this._table.on('rowClick', e => this._tradeWidget.openTradeWindow(this._getCoin(e.detail.itemId)));
   }
 
   _initPortfolio() {
@@ -81,8 +75,10 @@ export class App {
   _initTradeWidget() {
     this._tradeWidget = new TradeWidget({
       element: this._el.querySelector('[data-element="trade-widget"]'),
-      onBuyClick: (coinId, amount) => this._buyItem(coinId, amount),
     });
+    this._tradeWidget.on('buy', e => {
+      this._buyItem(e.detail.itemId, e.detail.amount)
+    })
   }
 
   _render() {
@@ -92,12 +88,10 @@ export class App {
             <h1>Tiny Crypto Market</h1>
         </div>
       </div>
-      <div class="row portfolio-row">
-          <div class="col s6 offset-s6" data-element="portfolio"></div>
-      </div>
       <div class="row">
           <div class="col s12" data-element="table"></div>
       </div>
+      <div class="col s6 offset-s6" data-element="portfolio"></div>
       <div data-element="trade-widget"></div>
     `;
   }

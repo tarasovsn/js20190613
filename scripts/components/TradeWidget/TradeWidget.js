@@ -1,35 +1,37 @@
-export class TradeWidget {
+import { Component } from '../Component/Component.js';
 
-  constructor({ element, onBuyClick }) {
+export class TradeWidget extends Component {
+
+  constructor({ element }) {
+    super();
     this._el = element;
-    this._onBuyClickCallback = onBuyClick;
 
-    this._el.addEventListener('input', e => {
+    this.on('input', e => {
       this._isBuyActive = false;
       this._total = 0;
       const value = Number(e.target.value);
       if (Number.isNaN(value)) {
-        this._errorMsg = "Please enter the number!";
+        this.showErrorMessage("Please enter the number!");
       } else if (value <= 0) {
-        this._errorMsg = "Please enter the pozitive number!";
+        this.showErrorMessage("Please enter the pozitive number!");
       } else {
         this._amount = value;
         this._total = this._amount * this._currentItem.price;
-        this._errorMsg = null;
         this._isBuyActive = true;
       }
       this._updateDisplay();
     });
 
-    this._el.addEventListener('click', e => {
+    this.on('click', e => {
+      e.preventDefault();
       if (e.target.closest('a.modal-buy')) {
-        let { isSuccess, errorMsg } = this._onBuyClickCallback(this._currentItem.id, this._amount);
-        if(isSuccess) {
-          this.closeTradeWindow();
-        } else {
-          this._errorMsg = errorMsg;
-          this._updateDisplay();
-        }
+        let buyEvent = new CustomEvent('buy', {
+          detail: {
+            itemId: this._currentItem.id,
+            amount: this._amount,
+          }
+        });
+        this._el.dispatchEvent(buyEvent);
       } else if (e.target.closest('a.modal-close')) {
         this.closeTradeWindow();
       }
@@ -46,13 +48,12 @@ export class TradeWidget {
     this._modalEl.classList.remove('open');
   }
 
+  showErrorMessage(message) {
+    this._errorMsgEl.textContent = message;
+  }
+
   _updateDisplay() {
     this._itemTotalEl.textContent = this._total.toFixed(2);
-    if (this._errorMsg) {
-      this._errorMsgEl.textContent = this._errorMsg;
-    } else {
-      this._errorMsgEl.textContent = '';
-    }
     if (this._isBuyActive) {
       this._buyButtonEl.classList.remove('disabled');
     } else {
