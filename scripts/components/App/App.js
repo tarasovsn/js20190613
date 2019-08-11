@@ -2,7 +2,7 @@ import { Table } from '../Table/Table.js';
 import { Portfolio } from '../Portfolio/Portfolio.js';
 import { TradeWidget } from '../TradeWidget/TradeWidget.js';
 import { DataService } from '../../services/DataService.js';
-import { Component } from "../component/Component.js";
+import { Component } from "../Component/Component.js";
 
 export class App extends Component {
 

@@ -1,4 +1,4 @@
-import { Component } from "../component/Component.js";
+import { Component } from "../Component/Component.js";
 
 export class Table extends Component {
   constructor({ element, data }) {
