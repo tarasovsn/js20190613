@@ -8,6 +8,10 @@ export class Table extends Component {
     this.on('click', e => this._onRowClick(e));
   }
 
+  update(data) {
+    this._tableBodyEl.innerHTML = this._renderTableBody(data);
+  }
+
   _onRowClick(e) {
     const target = e.target.closest('tbody tr');
     if (!target) return;
@@ -31,18 +35,25 @@ export class Table extends Component {
           </tr>
         </thead>
         <tbody>
-          ${
-            data.map(coin => `
-              <tr data-id="${coin.id}">
-                <td>${coin.name}</td>
-                <td>${coin.symbol}</td>
-                <td>${coin.rank}</td>
-                <td>${coin.price}</td>
-              </tr>
-            `).join('')
-          }
+          ${this._renderTableBody(data)}
         </tbody>
       </table>
+    `;
+    this._tableBodyEl = this._el.querySelector('tbody');
+  }
+
+  _renderTableBody(data) {
+    return `
+      ${
+        data.map(coin => `
+        <tr data-id="${coin.id}">
+          <td>${coin.name}</td>
+          <td>${coin.symbol}</td>
+          <td>${coin.rank}</td>
+          <td>${coin.price}</td>
+        </tr>
+      `).join('')
+      }
     `;
   }
 }

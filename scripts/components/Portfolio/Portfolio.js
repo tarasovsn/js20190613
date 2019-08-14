@@ -1,6 +1,9 @@
-export class Portfolio {
+import { Component } from "../Component/Component.js";
+
+export class Portfolio extends Component {
 
   constructor({ element, balance, items = [] }) {
+    super();
     this._el = element;
     this._balance = balance;
     this._items = [ ...items.values() ];
